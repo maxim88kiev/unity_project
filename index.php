@@ -13,13 +13,13 @@ function getSession($name)
     return isset($_SESSION[$name]) ? $_SESSION[$name] : null;
 }
 
-function getGET($name)
+function getPOST($name)
 {
-    return isset($_GET[$name]) ? $_GET[$name] : null;
+    return isset($_POST[$name]) ? $_POST[$name] : null;
 }
 $row = '';
-$task = getGET('task');
-$responseJson = getGET('json');
+$task = getPOST('task');
+$responseJson = getPOST('json');
 $response = json_decode($responseJson, true);
 
 $response = json_decode('[{"materials":{"1":"1","2":"1"}}]', true);
@@ -31,7 +31,7 @@ $result = mysqli_query($link, $query) or die("Ошибка " . mysqli_error($lin
 $row = $result->fetch_array();
 unset($row[0]);
 
-$access_token = getGet('access_token');
+$access_token = getPOST('access_token');
 
 if (!isset($_SESSION['access_token'])) {
     $_SESSION['access_token'] = rand(1000, 9999);
@@ -41,7 +41,7 @@ if ($task != null) {
     if ($access_token == getSession('access_token')) {
         switch ($task) {
             case 'calculate':
-                $value = getGET('value');
+                $value = getPOST('value');
                 if (is_numeric($value)) {
                     echo '{"value":' . $value * $value . ',"error":false}';
                     die;
@@ -56,8 +56,8 @@ if ($task != null) {
     } else {
         switch ($task) {
             case 'login':
-                $login = getGET('login');
-                $password = getGET('password');
+                $login = getPOST('login');
+                $password = getPOST('password');
                 if ($login == 'kreng' && $password == '1234') {
                     echo '{"access_token":"' . getSession('access_token') . '","error":false , "json":"' . json_encode($row) . '"}';
 //                    echo '{"access_token":"' . getSession('access_token') . '","error":false , "json":"' . $materials . '"}';
