@@ -1,6 +1,6 @@
 <?php
-$host = 'localhost'; // адрес сервера 
-$database = 'getachieve'; // имя базы данных
-$user = 'root'; // имя пользователя
-$password = ''; // пароль
+$host = 'gagames.mysql.tools'; // адрес сервера 
+$database = 'gagames_db'; // имя базы данных
+$user = 'gagames_db'; // имя пользователя
+$password = 'jcJzzdB7'; // пароль
 ?>
