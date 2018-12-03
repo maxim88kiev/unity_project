@@ -1,7 +1,5 @@
 <?php
 require_once 'connection.php'; // подключаем скрипт
-
-
 session_start();
 
 // подключаемся к серверу
@@ -21,9 +19,6 @@ $row = '';
 $task = getPOST('task');
 $responseJson = getPOST('json');
 $response = json_decode($responseJson, true);
-
-$response = json_decode('[{"materials":{"1":"1","2":"1"}}]', true);
-
 $materials = $response[0]['materials']['2'];
 // выполняем операции с базой данных
 $query ="select parent_id from material_synthesis where child_id = " .$materials;
