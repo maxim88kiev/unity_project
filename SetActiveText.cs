@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 //using System.Collections;
 //using System;
 using System.IO;
@@ -25,38 +25,99 @@ public class SetActiveText : MonoBehaviour {
 
 
 
-    private static string server = "http://127.0.0.1/unity/index.php?task=";
+
+
+
+
+
+
+
+
+
+
+
+
+    //private static string server = "http://1385403.gagames.web.hosting-test.net/index.php?task=";
+
+    //private static CookieContainer cookieContainer = new CookieContainer();
+
+    //private static string GetJSONString(string uri)
+    //{
+    //    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+    //    request.Method = "GET";
+    //    request.CookieContainer = cookieContainer;
+    //    request.UserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; MyIE2;";
+    //    request.Accept = "image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, application / x - shockwave - flash, application / vnd.ms - excel, application / vnd.ms - powerpoint, application / msword, */*";
+    //    request.Headers.Add("Accept-Language", "en");
+    //    request.ContentType = "text/plain";
+    //    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+    //    StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+    //    return myStreamReader.ReadToEnd();
+    //}
+
+    //private static Dictionary<string, object> GetJSON(string task, Dictionary<string, string> data = null)
+    //{
+    //    string uri = server + task;
+    //    if (data != null)
+    //    {
+    //        foreach (string key in data.Keys)
+    //        {
+    //            uri += string.Format("&{0}={1}", key, data[key]);
+    //        }
+    //    }
+    //    var json = GetJSONString(uri).FromJson<object>();
+    //    return (Dictionary<string, object>)json;
+    //}
+
+
+
+
+
+private static readonly string server = "http://1385403.gagames.web.hosting-test.net/index.php";
 
     private static CookieContainer cookieContainer = new CookieContainer();
 
-    private static string GetJSONString(string uri)
+    private static string GetJSONString(string postData = null)
     {
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-        request.Method = "GET";
-        request.CookieContainer = cookieContainer;
-        request.UserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; MyIE2;";
-        request.Accept = "image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, application / x - shockwave - flash, application / vnd.ms - excel, application / vnd.ms - powerpoint, application / msword, */*";
-        request.Headers.Add("Accept-Language", "en");
-        request.ContentType = "text/plain";
-        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-        StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
-        return myStreamReader.ReadToEnd();
+        try
+        {
+            var data = Encoding.ASCII.GetBytes(postData);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(server);
+            request.CookieContainer = cookieContainer;
+            request.Method = "POST";
+            request.ContentType = "application/x-www-form-urlencoded";
+            request.ContentLength = data.Length;
+            using (var stream = request.GetRequestStream())
+            {
+                stream.Write(data, 0, data.Length);
+            }
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+            return reader.ReadToEnd();
+        }
+        catch
+        {
+            return "{\"error\":true,\"error_msg\":\"the server does not respond\"}";
+        }
     }
 
-    private static Dictionary<string, object> GetJSON(string task, Dictionary<string, string> data = null)
+    private static Dictionary<string, object> GetJSON(Dictionary<string, string> data = null)
     {
-        string uri = server + task;
+        int count, i = 0;
+        string postData = null;
         if (data != null)
         {
+            postData = string.Empty;
+            count = data.Keys.Count - 1;
             foreach (string key in data.Keys)
             {
-                uri += string.Format("&{0}={1}", key, data[key]);
+                postData += string.Format("{0}={1}{2}", key, data[key], i < count ? "&" : string.Empty);
+                i++;
             }
         }
-        var json = GetJSONString(uri).FromJson<object>();
+        var json = GetJSONString(postData).FromJson<object>();
         return (Dictionary<string, object>)json;
     }
-
 
 
     public static void StartClient()
@@ -65,12 +126,13 @@ public class SetActiveText : MonoBehaviour {
 
 
         Dictionary<string, string> data = new Dictionary<string, string>();
+        data["task"] = "login";
         data["login"] = "kreng";
         data["password"] = "1234";
         data["json"] = "[{\"materials\":{\"1\":\"1\",\"2\":\"1\"}}]";
 
 
-        Dictionary<string, object> auth = GetJSON("login", data);
+        Dictionary<string, object> auth = GetJSON(data);
         bool error = (bool)auth["error"];
         if (!error)
         {
@@ -78,7 +140,26 @@ public class SetActiveText : MonoBehaviour {
             string json = (string)auth["json"];
             Debug.Log("json: " + json);
             Debug.Log(access_token);
+
+            //data = new Dictionary<string, string>();
+            //data["access_token"] = access_token;
+            //data["json"] = "[{\"materials\":{\"1\":\"1\",\"2\":\"1\"}}]";
+            //Dictionary<string, object> new_json = GetJSON(data);
+            //string json_2 = (string)new_json["json"];
+            //Debug.Log("json: " + json_2);
+
+
         }
+
+
+
+
+
+
+
+
+
+
 
 
 
