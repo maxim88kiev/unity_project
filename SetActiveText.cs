@@ -6,7 +6,7 @@ using TinyJson;
 using System.Collections.Generic;
 
 public class SetActiveText : MonoBehaviour {
-private static readonly string server = "http://1385403.gagames.web.hosting-test.net/index.php";
+private static readonly string server = "http://localhost/unity/index.php";
 private static CookieContainer cookieContainer = new CookieContainer();
     private static string GetJSONString(string postData = null)
     {
@@ -50,29 +50,43 @@ private static CookieContainer cookieContainer = new CookieContainer();
         return (Dictionary<string, object>)json;
     }
 
+    // ****
+    //static string login = null;
+    //static string pass = null;
+    //static string function = null;
+
+    //public static string RegistrationToString(string login, string pass, string function) {
+    //    StringBuilder builder = new StringBuilder();
+    //    builder.Append(function + "#");
+    //    builder.Append(login + "#");
+    //    builder.Append(pass);
+    //    return builder.ToString();
+    //}
+
+    //static string send_son = JsonUtility.ToJson(RegistrationToString(login, pass, function));
+
+    //***
+
     public static void StartClient()
     {
         Dictionary<string, string> data = new Dictionary<string, string>();
-        data["task"] = "login";
+        data["task"] = "auth.login";
         data["login"] = "kreng";
-        data["password"] = "1234";
-        data["json"] = "[{\"materials\":{\"1\":\"1\",\"2\":\"1\"}}]";
+        data["password"] = "12345";
         Dictionary<string, object> auth = GetJSON(data);
         bool error = (bool)auth["error"];
         if (!error)
         {
-            string access_token = (string)auth["access_token"];
-            string json = (string)auth["json"];
+            Dictionary<string, string> json_send = new Dictionary<string, string>();
+            json_send["task"] = "hello.asd";
+            json_send["access_token"] = (string)auth["access_token"];
+            json_send["json"] = "[{\"registration\":{\"login\":\"radalex\",\"password\":\"222\"}}]";
+            //data["json"] = "[" + result + "]";
+            Dictionary<string, object> auth_json = GetJSON(json_send);
+            string json = (string)auth_json["json"];
+            string result_json = (string)auth_json["result"];
             Debug.Log("json: " + json);
-            Debug.Log(access_token);
-
-            //data = new Dictionary<string, string>();
-            //data["access_token"] = access_token;
-            //data["json"] = "[{\"materials\":{\"1\":\"1\",\"2\":\"1\"}}]";
-            //Dictionary<string, object> new_json = GetJSON(data);
-            //string json_2 = (string)new_json["json"];
-            //Debug.Log("json: " + json_2);
-
+            Debug.Log("result: " + result_json);
         }
 
 
